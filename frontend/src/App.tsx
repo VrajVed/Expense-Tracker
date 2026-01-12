@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button';
 import { Card, CardHeader,  CardTitle, CardDescription, CardContent } from './components/ui/card';
 import './App.css'
+
+import { api } from '@/lib/api';
+
+
 
 function App() {
   const [totalSpent, setTotalSpent] = useState(0);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/expenses')
+    async function fetchTotalSpent() {
+      const res = await client.api.expenses["total-spent"].$get();
+      const data = await res.json();
+      setTotalSpent(data.total);
+    }
+    fetchTotalSpent();
   }, []);
 
   return (
