@@ -1,4 +1,4 @@
-import { type apiRoutes } from '../../server/app';
+import type { apiRoutes } from '@server/app';
 import { hc } from 'hono/client';
 
 
