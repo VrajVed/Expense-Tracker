@@ -7,36 +7,26 @@ import { useQuery } from '@tanstack/react-query';
 
 async function getTotalSpent() {
   const res = await api.expenses["total-spent"].$get();
+  if (!res.ok) {
+    throw new Error('Failed to fetch total spent');
+  }
   const data = await res.json();
   return data
 }
 
 function App() {
-  const [totalSpent, setTotalSpent] = useState(0);
-  const query = useQuery({queryKey: ['getTotalSpent'], queryFn: )
+  // RPC and async state management with react query without using useState and useEffect.
+  const {isPending, error, data} = useQuery({queryKey: ['getTotalSpent'], queryFn: getTotalSpent});
 
-  useEffect(() => {
-    async function fetchTotalSpent() {
-      const res = await api.expenses["total-spent"].$get();
-      // `hono/client` might return the parsed body or a Response-like object.
-      if (res && typeof res === 'object' && 'total' in res) {
-        setTotalSpent((res as any).total ?? 0);
-      } else if (res && typeof (res as Response).json === 'function') {
-        const data = await (res as Response).json();
-        setTotalSpent(data.total ?? 0);
-      } else {
-        setTotalSpent(0);
-      }
-    }
-    fetchTotalSpent();
-  }, []);
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
 
   return (
     <Card className='w-[350]px'>
       <CardHeader>
         <CardTitle>Total Spent</CardTitle>
         <CardDescription>The total amount you've spent</CardDescription>
-        <CardContent>{totalSpent}</CardContent>
+        <CardContent>{isPending ? "Loading..." : data.total}</CardContent>
       </CardHeader>
     </Card>
   )
